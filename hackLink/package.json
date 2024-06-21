@@ -1,10 +1,10 @@
 {
   "name": "hacklink",
   "version": "1.0.0",
-  "description": "",
+  "description": "demonstração rapida de um spyware",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
   },
   "keywords": [],
   "author": "",
@@ -13,5 +13,10 @@
     "express": "^4.19.2",
     "fs-extra": "^11.2.0",
     "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "imagemin": "^9.0.0",
+    "sass": "^1.77.6",
+    "typescript": "^5.5.2"
   }
 }
