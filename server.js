@@ -7,6 +7,9 @@ const fs = require("fs-extra");
 const app = express();
 const port = process.env.PORT || 3030;
 
+// Ensure the "data" directory exists
+const dataDir = path.join(__dirname, 'data');
+fs.ensureDirSync(dataDir);
 
 // Configuração do armazenamento com Multer
 const storage = multer.diskStorage({
@@ -32,11 +35,10 @@ app.use("/data", express.static("data"));
 
 // Rota para receber o upload
 app.post("/upload", upload.single("image"), (req, res) => {
-    console.log("[+] Imagem recebida")
+    console.log("[+] Imagem recebida");
     const baseUrl = `${req.protocol}://${req.get("host")}`;
-  res.send({ imagePath: `${baseUrl}/data/${req.file.filename}` });
+    res.send({ imagePath: `${baseUrl}/data/${req.file.filename}` });
 });
-
 
 // Rota para listar todas as imagens
 app.get("/images", async (req, res) => {
@@ -67,20 +69,18 @@ app.post("/delete/:id", async (req, res) => {
     }
   });
   
-  // Rota para excluir todos os dados
-  app.post("/apagarDados", async (req, res) => {
-      console.log("[+] Iniciou a tentativa de apagar os dados")
-      try {
-        await fs.emptyDir("data/");
-        console.error("[+] Todos os dados foram apagados");
-        res.send(`Dados apagados com sucesso.`);
-      } catch (error) {
-        console.error("[-] Erro ao apagar dados:", error);
-        res.status(500).send("Erro ao apagar dados.");
-      }
-  });
-  
-  
+// Rota para excluir todos os dados
+app.post("/apagarDados", async (req, res) => {
+    console.log("[+] Iniciou a tentativa de apagar os dados")
+    try {
+      await fs.emptyDir("data/");
+      console.log("[+] Todos os dados foram apagados");
+      res.send("Dados apagados com sucesso.");
+    } catch (error) {
+      console.error("[-] Erro ao apagar dados:", error);
+      res.status(500).send("Erro ao apagar dados.");
+    }
+});
 
 // Iniciar o servidor
 app.listen(port, () => {
